@@ -35,10 +35,10 @@ export const App = () => {
       try {
         const response = await getImages(search.slice(14), page);
         const responseHits = response.hits;
-        setImage(prevState => [...prevState, ...responseHits]);
 
         const numberOfPhotos = response.totalHits - image.length;
         setTotal(numberOfPhotos);
+        setImage(prevState => [...prevState, ...responseHits]);
         setStatus(RESOLVD);
       } catch (error) {
         setStatus(REJECTED);
@@ -55,7 +55,16 @@ export const App = () => {
       toast('<= Напиши тут щось)) Давай шукати котиків!!!');
       return;
     }
-    setSearch(`${Date.now()}/${value}`);
+
+    setSearch(prev => {
+      if (prev !== `${Date.now()}/${value}`) {
+        setStatus(IDEL);
+        setImage([]);
+        setPage(1);
+        setTotal(0);
+        return `${Date.now()}/${value}`;
+      }
+    });
   };
 
   const onLoadMore = () => {
