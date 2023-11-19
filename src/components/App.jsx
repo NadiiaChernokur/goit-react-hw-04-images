@@ -13,7 +13,7 @@ const STATUS = {
   REJECTED: 'rejected',
   RESOLVD: 'resolved',
 };
-const { IDEL, PENDING, REJECTED, RESOLVD } = STATUS;
+const { IDEL, PENDING, REJECTED } = STATUS;
 
 export const App = () => {
   const [search, setSearch] = useState('');
@@ -23,13 +23,16 @@ export const App = () => {
   const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    if (status === RESOLVD) {
+    if (status === IDEL) {
       return;
     }
-    if (search === '') {
-      return;
-    }
-    setStatus(PENDING);
+    // if (status === RESOLVD) {
+    //   return;
+    // }
+    // if (search === '') {
+    //   return;
+    // }
+    // setStatus(PENDING);
 
     async function toGetPhotos() {
       try {
@@ -41,14 +44,15 @@ export const App = () => {
         setTotal(numberOfPhotos);
 
         setImage(prevState => [...prevState, ...responseHits]);
-        setStatus(RESOLVD);
+        // setStatus(RESOLVD);
+        setStatus(IDEL);
       } catch (error) {
         setStatus(REJECTED);
       }
     }
 
     toGetPhotos();
-  }, [page, search]);
+  }, [page, search, status]);
 
   const onSubmitSearchbar = event => {
     event.preventDefault();
@@ -60,7 +64,7 @@ export const App = () => {
 
     setSearch(prev => {
       if (prev !== `${Date.now()}/${value}`) {
-        setStatus(IDEL);
+        setStatus(PENDING);
         setImage([]);
         setPage(1);
         setTotal(0);
@@ -71,7 +75,8 @@ export const App = () => {
 
   const onLoadMore = () => {
     setPage(prevState => prevState + 1);
-    setStatus(IDEL);
+    // setStatus(IDEL);
+    setStatus(PENDING);
   };
 
   const onChange = () => {
