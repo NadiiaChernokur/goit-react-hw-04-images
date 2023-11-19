@@ -36,8 +36,10 @@ export const App = () => {
         const response = await getImages(search.slice(14), page);
         const responseHits = response.hits;
 
-        const numberOfPhotos = response.totalHits - image.length;
+        // const numberOfPhotos = response.totalHits - image.length;
+        const numberOfPhotos = page < Math.ceil(response.totalHits / 12);
         setTotal(numberOfPhotos);
+
         setImage(prevState => [...prevState, ...responseHits]);
         setStatus(RESOLVD);
       } catch (error) {
@@ -46,7 +48,7 @@ export const App = () => {
     }
 
     toGetPhotos();
-  }, [image.length, page, search, status]);
+  }, [page, search]);
 
   const onSubmitSearchbar = event => {
     event.preventDefault();
@@ -95,9 +97,9 @@ export const App = () => {
           visible={true}
         />
       )}
+      {/* {total > 12 && <Button loadMore={onLoadMore} />} */}
 
-      {total > 12 && <Button loadMore={onLoadMore} />}
-
+      {total > 0 && <Button loadMore={onLoadMore} />}
       {status === REJECTED && (
         <div>Something went wrong... Please try again</div>
       )}
